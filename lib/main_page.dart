@@ -1,6 +1,6 @@
 import 'package:candy_store/cart_button.dart';
 import 'package:candy_store/cart_list_item.dart';
-import 'package:candy_store/cart_view_model.dart';
+import 'package:candy_store/cart_view_model_provider.dart';
 import 'package:candy_store/cart_page.dart';
 import 'package:candy_store/product_list_item.dart';
 import 'package:candy_store/products_page.dart';
@@ -14,7 +14,7 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  final CartViewModel cartViewModel = CartViewModel();
+  final CartViewModelProvider cartViewModel = CartViewModelProvider();
 
   @override
   void initState() {

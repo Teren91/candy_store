@@ -1,6 +1,6 @@
 import 'package:candy_store/cart_list_item.dart';
 import 'package:candy_store/cart_list_item_view.dart';
-import 'package:candy_store/cart_view_model.dart';
+import 'package:candy_store/cart_view_model_provider.dart';
 import 'package:flutter/material.dart';
 
 class CartPage extends StatefulWidget {
@@ -8,7 +8,7 @@ class CartPage extends StatefulWidget {
   final Function(CartListItem) onRemoveFromCart;
   final Function(CartListItem) onAddToCart;
   final ValueNotifier<Map<String, CartListItem>> items;
-  final CartViewModel cartViewModel;
+  final CartViewModelProvider cartViewModel;
 
   const CartPage({
     super.key,
@@ -23,7 +23,7 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
-  late final CartViewModel _cartViewModel;
+  late final CartViewModelProvider _cartViewModel;
   @override
   void initState() {
     super.initState();

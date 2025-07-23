@@ -1,8 +1,8 @@
-import 'package:candy_store/cart_view_model.dart';
+import 'package:candy_store/cart_view_model_provider.dart';
 import 'package:flutter/material.dart';
 
 class CartProvider extends InheritedWidget {
-  final CartViewModel cartViewModel;
+  final CartViewModelProvider cartViewModel;
 
   const CartProvider({
     super.key,
@@ -15,11 +15,12 @@ class CartProvider extends InheritedWidget {
     return cartViewModel != oldWidget.cartViewModel;
   }
 
-  static CartViewModel of(BuildContext context) {
+  static CartViewModelProvider of(BuildContext context) {
     final provider = context
         .dependOnInheritedWidgetOfExactType<CartProvider>()!
         .cartViewModel;
 
     return provider;
   }
+  
 }

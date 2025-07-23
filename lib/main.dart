@@ -1,4 +1,4 @@
-import 'package:candy_store/cart_view_model.dart';
+import 'package:candy_store/cart_view_model_provider.dart';
 import 'package:candy_store/cart_notifier_provider.dart';
 import 'package:candy_store/main_page.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 void main() {
   runApp(
     CartProvider(
-      cartViewModel: CartViewModel(),
+      cartViewModel: CartViewModelProvider(),
       child: MaterialApp(
         title: 'Candy store',
         theme: ThemeData(

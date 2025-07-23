@@ -4,22 +4,23 @@ import 'package:candy_store/cart_state.dart';
 import 'package:candy_store/product_list_item.dart';
 import 'package:flutter/material.dart';
 
-class CartViewModel extends ChangeNotifier {
+class CartViewModelProvider extends ChangeNotifier {
   final CartModel _cartModel = CartModel();
 
-  CartViewModel() {
+  CartViewModelProvider() {
     _cartModel.cartInfoStream.listen((cartInfo) {
-      _items.clear();
-      _totalPrice = cartInfo.totalPrice;
-      _totalItems = cartInfo.totalItems;
-      cartInfo.items.forEach((key, value) {
-        _items[key] = value;
-      });
+      _state = _state.copyWith(
+        items: cartInfo.items,
+        totalPrice: cartInfo.totalPrice,
+        totalItems: cartInfo.totalItems,
+        isProcessing: false,
+        error: null,
+      );
       notifyListeners();
     });
   }
 
-  CartState _state = CartState(
+  CartState _state = const CartState(
     items: {},
     totalPrice: 0,
     totalItems: 0,
@@ -29,34 +30,28 @@ class CartViewModel extends ChangeNotifier {
 
   CartState get state => _state;
 
-  final Map<String, CartListItem> _items = {};
-  double _totalPrice = 0;
-  int _totalItems = 0;
-
-  List<CartListItem> get items => _items.values.toList();
-  double get totalPrice => _totalPrice;
-  int get totalItems => _totalItems;
-
-  void addToCart(ProductListItem item) {
+  Future<void> addToCart(ProductListItem item) async {
     try {
       _state = _state.copyWith(isProcessing: true);
-      _cartModel.addToCart(item);
       notifyListeners();
+      await _cartModel.addToCart(item);
+      _state = _state.copyWith(isProcessing: false);
     } on Exception catch (e) {
       _state = _state.copyWith(error: e);
-      notifyListeners();
     }
+      notifyListeners();
   }
 
-  void removeFromCart(CartListItem item) {
+  Future<void> removeFromCart(CartListItem item) async {
     try {
       _state = _state.copyWith(isProcessing: true);
-      _cartModel.removeFromCart(item.product);
       notifyListeners();
+      await _cartModel.removeFromCart(item.product);
+      _state = _state.copyWith(isProcessing: false);
     } on Exception catch (e) {
       _state = _state.copyWith(error: e);
-      notifyListeners();
     }
+      notifyListeners();
   }
 
   void cleanError() {
@@ -68,5 +63,5 @@ class CartViewModel extends ChangeNotifier {
   void dispose() {
     _cartModel.dispose();
     super.dispose();
-  }
+  }  
 }
