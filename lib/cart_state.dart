@@ -4,14 +4,14 @@ class CartState {
   final Map<String, CartListItem> items;
   final double totalPrice;
   final int totalItems;
-  final bool isProcessing;
+  final bool? isProcessing;
   final Exception? error;
 
   const CartState({
     required this.items,
     required this.totalPrice,
     required this.totalItems,
-    required this.isProcessing,
+    this.isProcessing,
     this.error,
   });
 

@@ -1,23 +1,21 @@
-import 'package:candy_store/cart_cubit.dart';
+import 'package:candy_store/cart_bloc.dart';
+import 'package:candy_store/cart_event.dart';
 import 'package:candy_store/cart_list_item.dart';
 import 'package:candy_store/cart_list_item_view.dart';
-import 'package:candy_store/cart_view_model.dart';
+import 'package:candy_store/cart_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CartPage extends StatefulWidget {
-  //final List<CartListItem> items;
   final Function(CartListItem) onRemoveFromCart;
   final Function(CartListItem) onAddToCart;
   final ValueNotifier<Map<String, CartListItem>> items;
-  final CartViewModelProvider cartViewModel;
 
   const CartPage({
     super.key,
     required this.items,
     required this.onRemoveFromCart,
     required this.onAddToCart,
-    required this.cartViewModel,
   });
 
   @override
@@ -25,12 +23,12 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
-  late final CartViewModel _cartViewModel;
+  late final CartBloc _cartBloc;
   @override
   void initState() {
     super.initState();
-    _cartCubit = context.read<CartCubit>();
-    _cartCubit.loadCart();
+    _cartBloc = context.read<CartBloc>();
+    _cartBloc.add(const Load());
   }
 
   @override
@@ -39,17 +37,17 @@ class _CartPageState extends State<CartPage> {
       appBar: AppBar(
         title: const Text('Cart'),
       ),
-      body: BlocConsumer<CartCubit, CartState>(
+      body: BlocConsumer<CartBloc, CartState>(
           listener: (context, state){
             if(state.error != null) {
-              _cartCubit.clearError();
+              _cartBloc.add(const ClearError());
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Failed to perform this action'),),
               );
             }
           },
-          builder: (context, child) {
-            if (_cartCubit.state.isProcessing) {
+          builder: (context, state) {
+            if (state.isProcessing!) {
               return const Center(
                 child: CircularProgressIndicator(),
               );
@@ -96,7 +94,7 @@ class _CartPageState extends State<CartPage> {
                           ),
                         ),
                         Text(
-                          '${widget.cartViewModel.totalPrice} €',
+                          '${_cartBloc.state.totalPrice} €',
                           style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,

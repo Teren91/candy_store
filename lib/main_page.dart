@@ -1,10 +1,12 @@
 import 'package:candy_store/cart_button.dart';
+import 'package:candy_store/cart_bloc.dart';
 import 'package:candy_store/cart_list_item.dart';
 import 'package:candy_store/cart_view_model_provider.dart';
 import 'package:candy_store/cart_page.dart';
 import 'package:candy_store/product_list_item.dart';
 import 'package:candy_store/products_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -88,13 +90,15 @@ class _MainPageState extends State<MainPage> {
   void openCart() {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => CartPage(
-          items: cartItemsMap,
-          onAddToCart: (item) {
-            addToCart(item.product);
-          },
-          onRemoveFromCart: removeFromCart,
-          cartViewModel: cartViewModel,
+        builder: (context) => BlocProvider(
+          create: (context) => CartBloc(),
+          child: CartPage(
+            items: cartItemsMap,
+            onAddToCart: (item) {
+              addToCart(item.product);
+            },
+            onRemoveFromCart: removeFromCart,
+          ),
         ),
       ),
     );
