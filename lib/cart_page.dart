@@ -1,7 +1,9 @@
+import 'package:candy_store/cart_cubit.dart';
 import 'package:candy_store/cart_list_item.dart';
 import 'package:candy_store/cart_list_item_view.dart';
-import 'package:candy_store/cart_view_model_provider.dart';
+import 'package:candy_store/cart_view_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CartPage extends StatefulWidget {
   //final List<CartListItem> items;
@@ -23,29 +25,12 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
-  late final CartViewModelProvider _cartViewModel;
+  late final CartViewModel _cartViewModel;
   @override
   void initState() {
     super.initState();
-    _cartViewModel = CartViewModelProvider.read(context);
-    _cartViewModel.addListener(_onCartViewModelStateChanged);
-  }
-
-  @override
-  void dispose() {
-    _cartViewModel.dispose();
-    super.dispose();
-  }
-
-  void _onCartViewModelStateChanged() {
-    if (_cartViewModel.state.error != null) {
-      _cartViewModel.cleanError();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Failed to perform this action'),
-        ),
-      );
-    }
+    _cartCubit = context.read<CartCubit>();
+    _cartCubit.loadCart();
   }
 
   @override
@@ -54,10 +39,17 @@ class _CartPageState extends State<CartPage> {
       appBar: AppBar(
         title: const Text('Cart'),
       ),
-      body: ListenableBuilder(
-          listenable: _cartViewModel,
+      body: BlocConsumer<CartCubit, CartState>(
+          listener: (context, state){
+            if(state.error != null) {
+              _cartCubit.clearError();
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Failed to perform this action'),),
+              );
+            }
+          },
           builder: (context, child) {
-            if (_cartViewModel.state.isProcessing) {
+            if (_cartCubit.state.isProcessing) {
               return const Center(
                 child: CircularProgressIndicator(),
               );
