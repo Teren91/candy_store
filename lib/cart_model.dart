@@ -18,29 +18,63 @@ class CartModel {
 
   CartInfo get cartInfo => _cartInfo;
 
+  Future<CartInfo> get cartInfoFuture async => _cartInfo.copyWith(
+    items: Map.unmodifiable(_cartInfo.items)
+  );
+
   final StreamController<CartInfo> _cartInfoController =
       StreamController<CartInfo>.broadcast();
 
   Stream<CartInfo> get cartInfoStream => _cartInfoController.stream;
-  Future<CartInfo> get cartInfoFuture async => _cartInfo;
 
   Future<void> addToCart(ProductListItem item) async {
-    await Future.delayed(const Duration(seconds: 2));
-    _cartInfo.items[item.id] = CartListItem(
-      product: item,
-      quantity: 1,
-    );
+    await Future.delayed(const Duration(seconds: 3));
+    CartListItem? existingItem = _cartInfo.items[item.id];
+    if (existingItem != null) {
+      existingItem = CartListItem(
+        product: existingItem.product,
+        quantity: existingItem.quantity + 1,
+      );
+      _cartInfo.items[item.id] = existingItem;
+    } else {
+      final cartItem = CartListItem(
+        product: item,
+        quantity: 1,
+      );
+      _cartInfo.items[item.id] = cartItem;
+    }
+    _cartInfo.totalItems++;
     _cartInfo.totalPrice += item.price;
-    _cartInfo.totalItems += 1;
-    _cartInfoController.add(_cartInfo);
+
+    final cartInfo = _cartInfo.copyWith(
+      items: Map.unmodifiable(_cartInfo.items),
+    );
+
+    _cartInfoController.add(cartInfo);
   }
 
-  Future<void> removeFromCart(ProductListItem item) async {
+  Future<void> removeFromCart(CartListItem item) async {
     await Future.delayed(const Duration(seconds: 2));
-    _cartInfo.items.remove(item.id);
-    _cartInfo.totalPrice -= item.price;
-    _cartInfo.totalItems -= 1;
-    _cartInfoController.add(_cartInfo);
+
+    CartListItem? existingItem = _cartInfo.items[item.product.id];
+    if (existingItem != null) {
+      if (existingItem.quantity > 1) {
+        existingItem = CartListItem(
+          product: existingItem.product,
+          quantity: existingItem.quantity - 1,
+        );
+        _cartInfo.items[item.product.id] = existingItem;
+      } else {
+        _cartInfo.items.remove(item.product.id);
+      }
+    }
+
+    _cartInfo.totalItems --;
+    _cartInfo.totalPrice -= item.product.price;
+    final cartInfo = _cartInfo.copyWith(
+      items: Map.unmodifiable(_cartInfo.items),
+    );
+    _cartInfoController.add(cartInfo);
   }
 
   void dispose() {

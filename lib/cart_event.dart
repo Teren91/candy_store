@@ -13,12 +13,18 @@ final class AddItem extends CartEvent {
   final ProductListItem item;
 
   const AddItem(this.item);
+
+  @override
+  List<Object> get props => [item];
 }
 
 final class RemoveItem extends CartEvent {
-  final CartListItem item;
+  final CartListItem  item;
 
   const RemoveItem(this.item);
+
+  @override
+  List<Object> get props => [item];
 }
 
 final class ClearError extends CartEvent {

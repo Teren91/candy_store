@@ -1,20 +1,20 @@
+import 'package:candy_store/cart_bloc.dart';
+import 'package:candy_store/cart_event.dart';
 import 'package:candy_store/cart_list_item.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CartListItemView extends StatelessWidget {
   final CartListItem item;
-  final Function(CartListItem) onRemoveFromCart;
-  final Function(CartListItem) onAddToCart;
 
   const CartListItemView({
-    Key? key,
+    super.key,
     required this.item,
-    required this.onRemoveFromCart,
-    required this.onAddToCart,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
+    final cartBloc = context.read<CartBloc>();
     final product = item.product;
     final iconColor = Theme.of(context).colorScheme.secondary;
     return Container(
@@ -59,7 +59,9 @@ class CartListItemView extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         IconButton(
-                          onPressed: () => onRemoveFromCart(item),
+                          onPressed: () => cartBloc.state.loadingResult.isInProgress 
+                            ? null 
+                            : cartBloc.add(RemoveItem(item)),
                           icon: Icon(
                             Icons.remove,
                             color: iconColor,
@@ -73,7 +75,9 @@ class CartListItemView extends StatelessWidget {
                           ),
                         ),
                         IconButton(
-                          onPressed: () => onAddToCart(item),
+                           onPressed: cartBloc.state.loadingResult.isInProgress
+                              ? null
+                              : () => cartBloc.add(AddItem(item.product)),
                           icon: Icon(
                             Icons.add,
                             color: iconColor,

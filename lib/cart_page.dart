@@ -1,25 +1,25 @@
 import 'package:candy_store/cart_bloc.dart';
 import 'package:candy_store/cart_event.dart';
-import 'package:candy_store/cart_list_item.dart';
 import 'package:candy_store/cart_list_item_view.dart';
 import 'package:candy_store/cart_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CartPage extends StatefulWidget {
-  final Function(CartListItem) onRemoveFromCart;
-  final Function(CartListItem) onAddToCart;
-  final ValueNotifier<Map<String, CartListItem>> items;
 
   const CartPage({
-    super.key,
-    required this.items,
-    required this.onRemoveFromCart,
-    required this.onAddToCart,
+    super.key
   });
 
   @override
   State<CartPage> createState() => _CartPageState();
+
+  static Widget withBloc() {
+    return BlocProvider(
+      create: (context) => CartBloc(),
+      child: const CartPage(),
+    );
+  }
 }
 
 class _CartPageState extends State<CartPage> {
@@ -39,7 +39,7 @@ class _CartPageState extends State<CartPage> {
       ),
       body: BlocConsumer<CartBloc, CartState>(
           listener: (context, state){
-            if(state.error != null) {
+            if(state.loadingResult.isError) {
               _cartBloc.add(const ClearError());
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Failed to perform this action'),),
@@ -47,25 +47,22 @@ class _CartPageState extends State<CartPage> {
             }
           },
           builder: (context, state) {
-            if (state.isProcessing!) {
+            if (state.loadingResult.isInProgress) {
               return const Center(
                 child: CircularProgressIndicator(),
               );
             }
-            final values = widget.items.value.values.toList();
             return Stack(
               children: [
                 Padding(
                   padding: const EdgeInsets.only(bottom: 60),
                   child: ListView.builder(
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    itemCount: values.length,
+                    itemCount: state.items.length,
                     itemBuilder: (context, index) {
-                      final item = values[index];
+                      final item = state.items.values.toList()[index];
                       return CartListItemView(
-                        item: item,
-                        onRemoveFromCart: widget.onRemoveFromCart,
-                        onAddToCart: widget.onAddToCart,
+                        item: item
                       );
                     },
                   ),

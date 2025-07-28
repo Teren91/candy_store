@@ -2,7 +2,7 @@ import 'package:candy_store/cart_event.dart';
 import 'package:candy_store/cart_info.dart';
 import 'package:candy_store/cart_model.dart';
 import 'package:candy_store/cart_state.dart';
-import 'package:candy_store/product_list_item.dart';
+import 'package:candy_store/delayed_result.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CartBloc extends Bloc<CartEvent,CartState> {
@@ -14,7 +14,7 @@ class CartBloc extends Bloc<CartEvent,CartState> {
         items: {},
         totalPrice: 0,
         totalItems: 0,
-        isProcessing: false
+        loadingResult: DelayedResult.idle(),
       ),
     ) {
         on<Load>(_onLoad);
@@ -26,7 +26,7 @@ class CartBloc extends Bloc<CartEvent,CartState> {
 
     Future<void> _onLoad(Load event, Emitter emit) async {
       try{
-        emit(state.copyWith(isProcessing: true));
+        emit(state.copyWith(loadingResult: const DelayedResult.inProgress(),),);
         final cartInfo = await _cartModel.cartInfoFuture;
 
         emit(
@@ -36,7 +36,7 @@ class CartBloc extends Bloc<CartEvent,CartState> {
             totalItems: cartInfo.totalItems,
           ),
         );
-        emit(state.copyWith(isProcessing: false));
+        emit(state.copyWith(loadingResult: const DelayedResult.idle()));
         await emit.onEach(
           _cartModel.cartInfoStream, 
           onData: (CartInfo cartInfo) {
@@ -48,94 +48,42 @@ class CartBloc extends Bloc<CartEvent,CartState> {
               )
             );
           },
-          onError: (Object error, StackTrace stackTrace) {
-            emit(
-              state.copyWith(error: Exception('Failed to load cart info')));
-          },
         );
-
       } on Exception catch(e) {
-        emit(state.copyWith(error: e));
+         emit(state.copyWith(loadingResult: DelayedResult.fromError(e)));
       }
     }
 
     Future<void> _onAddItem(AddItem event, Emitter emit) async {
       try {
-        emit(state.copyWith(isProcessing: true));
-        final cartInfo = await _cartModel.cartInfoFuture;
+        emit(state.copyWith(loadingResult: const DelayedResult.inProgress(),),);
+        
+        await _cartModel.addToCart(event.item);
 
-        emit(
-          state.copyWith(
-            items: cartInfo.items,
-            totalPrice: cartInfo.totalPrice,
-            totalItems: cartInfo.totalItems,
-          ),
-        );
-        emit(state.copyWith(isProcessing: false));
-        await emit.forEach(
-          _cartModel.cartInfoStream, 
-          onData: (CartInfo cartInfo) {
-            emit(
-              state.copyWith(
-                items: cartInfo.items,
-                totalPrice: cartInfo.totalPrice,
-                totalItems: cartInfo.totalItems,
-              )
-            );
-          },
-          onError: (Object error, StackTrace stackTrace) {
-            emit(
-              state.copyWith(error: Exception('Failed to add item to cart'))
-            );
-          },
-        );
+        emit(state.copyWith(loadingResult: const DelayedResult.idle(),));
       } on Exception catch (e) {
-        emit(state.copyWith(error: e));
+        emit(state.copyWith(loadingResult: DelayedResult.fromError(e)));
       }
     }
 
     Future<void> _onRemoveItem(RemoveItem event, Emitter emit) async {
       try {
-        emit(state.copyWith(isProcessing: true));
-        final cartInfo = await _cartModel.cartInfoFuture;
-
-        emit(
-          state.copyWith(
-            items: cartInfo.items,
-            totalPrice: cartInfo.totalPrice,
-            totalItems: cartInfo.totalItems,
-          ),
-        );
-        emit(state.copyWith(isProcessing: false));
-        await emit.forEach(
-          _cartModel.cartInfoStream, 
-          onData: (CartInfo cartInfo) {
-            emit(
-              state.copyWith(
-                items: cartInfo.items,
-                totalPrice: cartInfo.totalPrice,
-                totalItems: cartInfo.totalItems,
-              )
-            );
-          },
-          onError: (Object error, StackTrace stackTrace) {
-            emit(
-              state.copyWith(error: Exception('Failed to add item to cart'))
-            );
-          },
-        );
+        emit(state.copyWith(loadingResult: const DelayedResult.inProgress(),),);
+        
+        await _cartModel.removeFromCart(event.item);
+        emit(state.copyWith(loadingResult: const DelayedResult.idle(),));
       } on Exception catch (e) {
-        emit(state.copyWith(error: e));
+         emit(state.copyWith(loadingResult: DelayedResult.fromError(e)));
       }
     }
 
     void _onClearError(ClearError event, Emitter emit) {
-      emit(state.copyWith(error: null));
+      emit(state.copyWith(loadingResult: const DelayedResult.idle(),));
     }
 
-    @override
-    Future<void> close() async {
-      _cartModel.dispose();
-      super.close();
-    }
+    // @override
+    // Future<void> close() async {
+    //   _cartModel.dispose();
+    //   super.close();
+    // }
 }

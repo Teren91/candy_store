@@ -1,4 +1,4 @@
-import 'package:candy_store/cart_notifier_provider.dart';
+import 'package:candy_store/cart_view_model_provider.dart';
 import 'package:candy_store/product_details_page.dart';
 import 'package:candy_store/product_list_item.dart';
 import 'package:flutter/material.dart';
@@ -13,14 +13,13 @@ class ProductListItemView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cartNotifier = CartProvider.of(context);
+    final cartModel = CartViewModelProvider.of(context);
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (_) => ProductDetailsPage(
               product: item,
-              onAddToCart: cartNotifier.addToCart,
             ),
           ),
         );
@@ -75,7 +74,7 @@ class ProductListItemView extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 GestureDetector(
-                  onTap: () => cartNotifier.addToCart(item),
+                  onTap: () => cartModel.addToCart(item),
                   child: Icon(
                     Icons.add,
                     size: 24,
