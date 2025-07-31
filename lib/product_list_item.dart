@@ -12,4 +12,14 @@ class ProductListItem {
     required this.price,
     required this.imageUrl,
   });
+
+  factory ProductListItem.fromJson(Map<String, dynamic> json) {
+    return ProductListItem(
+      id: json['id'],
+      name: json['name'],
+      description: json['description'],
+      price: json['price'],
+      imageUrl: json['imageUrl'],
+    );
+  }
 }

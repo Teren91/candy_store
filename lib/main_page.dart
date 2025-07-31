@@ -40,10 +40,6 @@ class _MainPageState extends State<MainPage> {
   }
 
   void openCart() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) =>  CartPage.withBloc(),
-      ),
-    );
+    Navigator.of(context).pushNamed('/cart');
   }
 }
