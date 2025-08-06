@@ -1,4 +1,4 @@
-import 'package:candy_store/cart_list_item.dart';
+import 'package:candy_store/presentation/widget/cart_list_item.dart';
 import 'package:candy_store/product_list_item.dart';
 import 'package:equatable/equatable.dart';
 

@@ -1,4 +1,4 @@
-import 'package:candy_store/api_service.dart';
+import 'package:candy_store/data/service/api_service.dart';
 import 'package:candy_store/cart_view_model.dart';
 import 'package:candy_store/cart_view_model_provider.dart';
 import 'package:candy_store/hive_service.dart';
@@ -19,12 +19,7 @@ Future<void> main() async {
         theme: ThemeData(
           primarySwatch: Colors.lime,
         ),
-        initialRoute: '/',
-        routes: {
-          '/': (context) => const MainPage(),
-          '/cart': (context) => CartPage.withBloc(),
-        }
-        // home: const MainPage(),
+        home: const MainPage(),
       ),
     ),
   );
