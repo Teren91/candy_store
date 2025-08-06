@@ -6,27 +6,29 @@ class DelayedResult<T> extends Equatable {
   final bool isInProgress;
 
   const DelayedResult.fromError(Exception e)
-    : value = null,
-      error = e,
-      isInProgress = false;
+      : value = null,
+        error = e,
+        isInProgress = false;
 
   const DelayedResult.fromValue(T result)
-    : value = result,
-      error = null,
-      isInProgress = false;
+      : value = result,
+        error = null,
+        isInProgress = false;
 
   const DelayedResult.inProgress()
-    : value = null,
-      error = null,
-      isInProgress = true;
+      : value = null,
+        error = null,
+        isInProgress = true;
 
   const DelayedResult.idle()
-    : value = null,
-      error = null,
-      isInProgress = false;
+      : value = null,
+        error = null,
+        isInProgress = false;
 
-  bool get isSuccesful => value != null;
+  bool get isSuccessful => value != null;
+
   bool get isError => error != null;
+
   bool get isIdle => value == null && error == null && !isInProgress;
 
   @override

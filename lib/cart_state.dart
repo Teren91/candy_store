@@ -1,7 +1,8 @@
 import 'package:candy_store/cart_list_item.dart';
 import 'package:candy_store/delayed_result.dart';
+import 'package:equatable/equatable.dart';
 
-class CartState {
+class CartState extends Equatable {
   final Map<String, CartListItem> items;
   final double totalPrice;
   final int totalItems;
@@ -11,7 +12,7 @@ class CartState {
     required this.items,
     required this.totalPrice,
     required this.totalItems,
-    this.loadingResult = const DelayedResult.idle(),
+    required this.loadingResult,
   });
 
   CartState copyWith({
@@ -30,9 +31,9 @@ class CartState {
 
   @override
   List<Object?> get props => [
-    items,
-    totalPrice,
-    totalItems,
-    loadingResult,
-  ];
+        items,
+        totalPrice,
+        totalItems,
+        loadingResult,
+      ];
 }

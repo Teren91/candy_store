@@ -1,8 +1,12 @@
 import 'package:candy_store/cart_list_item.dart';
 import 'package:candy_store/product_list_item.dart';
+import 'package:equatable/equatable.dart';
 
-sealed class CartEvent {
+sealed class CartEvent extends Equatable {
   const CartEvent();
+
+  @override
+  List<Object?> get props => [];
 }
 
 final class Load extends CartEvent {
@@ -15,16 +19,16 @@ final class AddItem extends CartEvent {
   const AddItem(this.item);
 
   @override
-  List<Object> get props => [item];
+  List<Object?> get props => [item];
 }
 
 final class RemoveItem extends CartEvent {
-  final CartListItem  item;
+  final CartListItem item;
 
   const RemoveItem(this.item);
 
   @override
-  List<Object> get props => [item];
+  List<Object?> get props => [item];
 }
 
 final class ClearError extends CartEvent {

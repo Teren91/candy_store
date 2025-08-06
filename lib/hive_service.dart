@@ -1,40 +1,44 @@
-import 'package:candy_store/product_list_item.dart';
-import 'package:hive_flutter/adapters.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+
+import 'product.dart';
 
 class HiveService {
   Future<void> initializeHive() async {
     await Hive.initFlutter();
-
     Hive.registerAdapter(ProductAdapter());
-    await Hive.openBox<ProductListItem>('products');
+    await Hive.openBox<Product>('products');
   }
 
-  Box<ProductListItem> getProductBox() {
-    return Hive.box<ProductListItem>('products');
+  Box<Product> getProductBox() {
+    return Hive.box<Product>('products');
   }
 }
 
-class ProductAdapter extends TypeAdapter<ProductListItem> {
+class ProductAdapter extends TypeAdapter<Product> {
   @override
   final typeId = 0;
 
   @override
-  ProductListItem read(BinaryReader reader) {
-    return ProductListItem(
-      id: reader.readString(),
-      name: reader.readString(),
-      description: reader.readString(),
-      price: reader.readInt(),
-      imageUrl: reader.readString(),
+  Product read(BinaryReader reader) {
+    return Product(
+      id: reader.read(),
+      name: reader.read(),
+      description: reader.read(),
+      price: reader.read(),
+      imageUrl: reader.read(),
+      sku: reader.read(),
+      stock: reader.read(),
     );
   }
 
   @override
-  void write(BinaryWriter writer, ProductListItem obj) {
-    writer.writeString(obj.id);
-    writer.writeString(obj.name);
-    writer.writeString(obj.description);
-    writer.writeInt(obj.price);
-    writer.writeString(obj.imageUrl);
+  void write(BinaryWriter writer, Product obj) {
+    writer.write(obj.id);
+    writer.write(obj.name);
+    writer.write(obj.description);
+    writer.write(obj.price);
+    writer.write(obj.imageUrl);
+    writer.write(obj.sku);
+    writer.write(obj.stock);
   }
 }

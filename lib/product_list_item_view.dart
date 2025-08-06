@@ -13,7 +13,8 @@ class ProductListItemView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cartModel = CartViewModelProvider.of(context);
+    final cartViewModel = CartViewModelProvider.of(context);
+
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(
@@ -74,7 +75,7 @@ class ProductListItemView extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 GestureDetector(
-                  onTap: () => cartModel.addToCart(item),
+                  onTap: () => cartViewModel.addToCart(item),
                   child: Icon(
                     Icons.add,
                     size: 24,

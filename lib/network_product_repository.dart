@@ -3,6 +3,10 @@ import 'package:candy_store/product_list_item.dart';
 import 'package:candy_store/product_repository.dart';
 
 class NetworkProductRepository implements ProductRepository{
+import 'package:candy_store/product.dart';
+import 'package:candy_store/product_repository.dart';
+
+class NetworkProductRepository implements ProductRepository {
   NetworkProductRepository(this._apiService);
 
   final ApiService _apiService;
@@ -35,4 +39,8 @@ class NetworkProductRepository implements ProductRepository{
   @override
   // TODO: implement products
   List<ProductListItem> get products => throw UnimplementedError();
+}
+  Future<List<Product>> fetchProducts() {
+    return _apiService.fetchProducts();
+  }
 }

@@ -4,31 +4,35 @@ import 'package:flutter/material.dart';
 class CartViewModelProvider extends InheritedWidget {
   final CartViewModel cartViewModel;
 
-  const CartViewModelProvider ({
+  const CartViewModelProvider({
     super.key,
     required this.cartViewModel,
-    required super.child,
-    });
-  
-  static CartViewModel of (BuildContext context) {
+    required Widget child,
+  }) : super(child: child);
+
+  static CartViewModel of(BuildContext context) {
     final provider = context.dependOnInheritedWidgetOfExactType<CartViewModelProvider>();
+
     if (provider == null) {
-      throw Exception('CartViewModelProvider not found');
+      throw 'No CartProvider found in context';
     }
+
     return provider.cartViewModel;
   }
 
   static CartViewModel read(BuildContext context) {
-    final provider = context.getInheritedWidgetOfExactType<CartViewModelProvider>();
+    final provider =
+    context.getInheritedWidgetOfExactType<CartViewModelProvider>();
+
     if (provider == null) {
-      throw Exception('CartViewModelProvider not found');
+      throw Exception('No CartViewModelProvider found in context');
     }
+
     return (provider).cartViewModel;
   }
 
   @override
-  bool updateShouldNotify(CartViewModelProvider oldWidget){
+  bool updateShouldNotify(CartViewModelProvider oldWidget) {
     return cartViewModel != oldWidget.cartViewModel;
   }
- 
 }

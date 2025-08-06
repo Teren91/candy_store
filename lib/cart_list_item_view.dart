@@ -15,13 +15,10 @@ class CartListItemView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cartBloc = context.read<CartBloc>();
+
     final product = item.product;
-    final iconColor = Theme.of(context).colorScheme.secondary;
     return Container(
-      padding: const EdgeInsets.symmetric(
-        vertical: 12,
-        horizontal: 16,
-      ),
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -59,12 +56,12 @@ class CartListItemView extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         IconButton(
-                          onPressed: () => cartBloc.state.loadingResult.isInProgress 
-                            ? null 
-                            : cartBloc.add(RemoveItem(item)),
+                          onPressed: cartBloc.state.loadingResult.isInProgress
+                              ? null
+                              : () => cartBloc.add(RemoveItem(item)),
                           icon: Icon(
                             Icons.remove,
-                            color: iconColor,
+                            color: Theme.of(context).colorScheme.secondary,
                           ),
                         ),
                         Text(
@@ -75,12 +72,12 @@ class CartListItemView extends StatelessWidget {
                           ),
                         ),
                         IconButton(
-                           onPressed: cartBloc.state.loadingResult.isInProgress
+                          onPressed: cartBloc.state.loadingResult.isInProgress
                               ? null
                               : () => cartBloc.add(AddItem(item.product)),
                           icon: Icon(
                             Icons.add,
-                            color: iconColor,
+                            color: Theme.of(context).colorScheme.secondary,
                           ),
                         ),
                       ],
